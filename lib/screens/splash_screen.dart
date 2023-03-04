@@ -1,9 +1,12 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ustad/screens/first_screen.dart';
 import 'package:ustad/screens/home_screen.dart';
 import 'package:ustad/screens/login.dart';
+import 'package:ustad/screens/signup.dart';
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
@@ -16,33 +19,45 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     // TODO: implement initState
-    final user = _auth.currentUser;
-    if(user !=null){
-      Timer(Duration(seconds: 3), (){
-        Navigator.of(context).pushNamed(HomeScreen.routeName);
-      });
-    }else{
-      Timer(Duration(seconds: 3), (){
-        Navigator.of(context).pushNamed(LogIn.routeName);
-      });
-    }
+    // final user=_auth.currentUser;
+    Timer(Duration(seconds: 3), (){
+      Navigator.of(context).pushNamed(FirstScreen.routeName);
+    });
+    // if(user !=null){
+    //   Timer(Duration(seconds: 3), (){
+    //     Navigator.of(context).pushNamed(HomeScreen.routeName);
+    //   });
+    // }else{
+    //   Timer(Duration(seconds: 3), (){
+    //     Navigator.of(context).pushNamed(LogIn.routeName);
+    //   });
+    // }
     super.initState();
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child:  Container(
-          height: MediaQuery.of(context).size.height,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            image: DecorationImage(
-              image: NetworkImage("https://images.unsplash.com/photo-1579600161224-cac5a2971069?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTB8fHdlbGNvbWV8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60"),
-              fit: BoxFit.fill,
-            ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              padding: EdgeInsets.all(10),
+              height: MediaQuery.of(context).size.height*.5,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                image: DecorationImage(
+                  image: AssetImage("image/game.jpg"),
+                  fit: BoxFit.cover,
+                ),
 
-          ),
+              ),
+            ),
+            SizedBox(height: 50,),
+            Text("Wellcome",style: TextStyle(fontSize: 35,fontWeight: FontWeight.w900),),
+          ],
         ),
       ),
     );

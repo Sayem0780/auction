@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:ustad/screens/add_post.dart';
+import 'package:ustad/screens/bid_description.dart';
 import 'package:ustad/screens/first_screen.dart';
 import 'package:ustad/screens/home_screen.dart';
 import 'package:ustad/screens/login.dart';
@@ -20,18 +21,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Auction App',
-      theme: ThemeData(
-        primarySwatch: Colors.deepOrange,
-      ),
-      home: SplashScreen(),
-      routes: {
-        SignUp.routeName:(context)=> SignUp(),
-        LogIn.routeName:(context)=> LogIn(),
-        HomeScreen.routeName:(context)=>HomeScreen(),
-        AddPost.routeName:(context)=>AddPost(),
-      },
+        debugShowCheckedModeBanner: false,
+        title: 'Auction App',
+        theme: ThemeData(
+          primarySwatch: Colors.deepPurple,
+        ),
+        home: SplashScreen(),
+        routes: {
+          FirstScreen.routeName:(context)=> FirstScreen(),
+          SignUp.routeName:(context)=> SignUp(),
+          LogIn.routeName:(context)=> LogIn(),
+          HomeScreen.routeName:(context)=>HomeScreen(),
+          AddPost.routeName:(context)=>AddPost(),
+          BidDescription.routeName:(context)=> BidDescription(),
+        },
     );
   }
 }

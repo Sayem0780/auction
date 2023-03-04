@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:ustad/components/round_button.dart';
+import 'package:ustad/widget/round_button.dart';
 import 'package:ustad/screens/signup.dart';
 
 import 'login.dart';
 
 class FirstScreen extends StatefulWidget {
+  static const routeName = '/first screen';
   const FirstScreen({Key? key}) : super(key: key);
 
   @override
@@ -28,7 +29,7 @@ class _FirstScreenState extends State<FirstScreen> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   image: DecorationImage(
-                    image: NetworkImage("https://media.istockphoto.com/id/1399348612/photo/hello-written-rectangular-shaped-yellow-chat-bubble-on-turquoise-background.jpg?b=1&s=170667a&w=0&k=20&c=fFfp1GiZhtmyHfcOI3VkdhV8nt9upRhd4x6x947Zs_E="),
+                    image: AssetImage("image/download.jpg"),
                     fit: BoxFit.fill,
                   )
                 ),

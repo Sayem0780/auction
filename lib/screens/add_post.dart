@@ -1,13 +1,13 @@
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:ustad/screens/home_screen.dart';
 
-import '../components/round_button.dart';
+import '../methods.dart';
+import '../widget/round_button.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 class AddPost extends StatefulWidget {
@@ -71,7 +71,7 @@ class _AddPostState extends State<AddPost> {
     },);
   }
   Future getCamera()async{
-    final pickedImage = await picker.pickImage(source: ImageSource.camera);
+    final XFile? pickedImage = await picker.pickImage(source: ImageSource.camera);
     setState(() {
       if(pickedImage!=null){
         _image=File(pickedImage.path);
@@ -81,7 +81,7 @@ class _AddPostState extends State<AddPost> {
     });
   }
   Future getGallery()async{
-    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+    final XFile? pickedImage = await picker.pickImage(source: ImageSource.gallery);
     setState(() {
       if(pickedImage!=null){
         _image=File(pickedImage.path);
@@ -174,44 +174,53 @@ class _AddPostState extends State<AddPost> {
                               }),
                             ),
                           ),
-                          // Padding(
-                          //   padding: const EdgeInsets.symmetric(vertical: 15.0),
-                          //   child: TextFormField(
-                          //     controller: priceController,
-                          //     keyboardType: TextInputType.number,
-                          //     maxLines: 1,
-                          //     decoration: InputDecoration(
-                          //       hintText: "Set Your Product Primary Price ",
-                          //       labelText: "Price",
-                          //       border: OutlineInputBorder(),
-                          //     ),
-                          //     onChanged: (String value){
-                          //       price = value as double;
-                          //     },
-                          //     validator: ((value) {
-                          //       return value!.isEmpty?'Set Price':null;
-                          //     }),
-                          //   ),
-                          // ),
-                          // Padding(
-                          //   padding: const EdgeInsets.symmetric(vertical: 15.0),
-                          //   child: TextFormField(
-                          //     controller: timelineController,
-                          //     keyboardType: TextInputType.datetime,
-                          //     maxLines: 1,
-                          //     decoration: InputDecoration(
-                          //       hintText: "Set Your Bid Timeline ",
-                          //       labelText: "Last Date",
-                          //       border: OutlineInputBorder(),
-                          //     ),
-                          //     onChanged: (String value){
-                          //       timeline = value as DateTime;
-                          //     },
-                          //     validator: ((value) {
-                          //       return value!.isEmpty?'Set a Date':null;
-                          //     }),
-                          //   ),
-                          // ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 15.0),
+                            child: TextFormField(
+                              controller: priceController,
+                              keyboardType: TextInputType.number,
+                              maxLines: 1,
+                              decoration: InputDecoration(
+                                hintText: "Set Your Product Primary Price ",
+                                labelText: "Price",
+                                border: OutlineInputBorder(),
+                              ),
+                              onChanged: (String value){
+                                price = value as double;
+                              },
+                              validator: ((value) {
+                                return value!.isEmpty?'Set Price':null;
+                              }),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 15.0),
+                            child: TextFormField(
+                              controller: timelineController,
+                              maxLines: 1,
+                              decoration: InputDecoration(
+                                hintText: "Set Your Bid Timeline ",
+                                labelText: "Last Date",
+                                border: OutlineInputBorder(),
+                              ),
+                              onTap: () async{
+                                  FocusScope.of(context).requestFocus(new FocusNode());
+
+                                  timeline = (await showDatePicker(
+                                      context: context,
+                                      initialDate:DateTime.now(),
+                                      firstDate:DateTime(1900),
+                                      lastDate: DateTime(2100)))!;
+                                   timelineController.text = timeline.toIso8601String();
+                              },
+                              onChanged: (String value){
+                                timeline = value as DateTime;
+                              },
+                              validator: ((value) {
+                                return value!.isEmpty?'Set a Date':null;
+                              }),
+                            ),
+                          ),
 
                           RoundButton(title: "Post", onpress: ()async{
                             if(_formKey.currentState!.validate()){
@@ -219,11 +228,10 @@ class _AddPostState extends State<AddPost> {
                                 showsipnner = true;
                               });
                               try{
-                                int date = DateTime.now().minute;
-                                firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance.ref('/bff');
-                                UploadTask uploadTask = ref.putFile(_image!.absolute);
-                                await Future.value(uploadTask);
-                                var newUrl = await ref.getDownloadURL();
+                                int date = DateTime.now().millisecondsSinceEpoch;
+                                firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance.ref().child('$date');
+                                await ref.putFile(_image!).whenComplete(() => null);
+                                final newUrl = await ref.getDownloadURL();
                                 User? user = _auth.currentUser;
                                 _postref.child('Post List').child(date.toString()).set({
                                   'pId': date.toString(),
@@ -231,17 +239,21 @@ class _AddPostState extends State<AddPost> {
                                   'pTime': date.toString(),
                                   'pTitle': titleController.text.toString(),
                                   'pDescription': descriptionController.text.toString(),
-                                  // 'pPrice': priceController.text.toString(),
-                                  // 'pTimeline': timelineController.text.toString(),
+                                  'pPrice': priceController.text.toString(),
+                                  'pTimeline': timelineController.text.toString(),
                                   'uId': user!.uid.toString(),
+                                  'uEmail':user!.email.toString()
                                 }).then((value) {
                                   setState(() {
                                     showsipnner = false;
+                                    Navigator.of(context).pushNamed(HomeScreen.routeName);
+
                                   });
                                   toastMassage("Post Published");
                                 }).onError(
                                         (error, stackTrace) {
                                           toastMassage(error.toString());
+                                          print(newUrl);
                                           setState(() {
                                             showsipnner = false;
                                           });
@@ -265,15 +277,5 @@ class _AddPostState extends State<AddPost> {
       ),
     );
   }
-  void toastMassage(String massage){
-    Fluttertoast.showToast(
-        msg: massage,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.SNACKBAR,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0
-    );
-  }
+
 }
