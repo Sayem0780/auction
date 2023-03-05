@@ -20,66 +20,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  FirebaseAuth _auth = FirebaseAuth.instance;
   final dbRef = FirebaseDatabase.instance.ref('post');
-  TextEditingController bidController = TextEditingController();
-  String bid ='';
   @override
   Widget build(BuildContext context) {
-    void dialog(context,DataSnapshot id){
-      showDialog(context: context, builder: (BuildContext){
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          content: Container(
-            height: 120,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Form(
-                  child: TextFormField(
-                    controller: bidController,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      hintText: "Enter Bid price",
-                      labelText: "Bid",
-                      border: OutlineInputBorder(),
-                    ),
-                    onChanged: (String value){
-                      bid = value;
-                    },
-                    validator: ((value) {
-                      return value!.isEmpty?'Enter Bid':null;
-                    }),
-                  ),
-                ),
-                SizedBox(height: 5,),
-                RoundButton(title: 'Bid Now', onpress: (){
-                  try{
-                   var r = DateTime.now().millisecondsSinceEpoch;
-                   User? user = _auth.currentUser;
-                    dbRef.child('Bider List').child('BID').child(id.value.toString()).child(r.toString()).set(
-                        {
-                          'pBid':bid,
-                          'biderEmail': user!.email,
-                          'bId': id.value.toString(),
-                        }
-                    ).then((value) {
-                      Navigator.pop(context);
-                    });
-                  }catch(e){
-                    print(e.toString());
 
-                  }
-                })
-              ],
-            ),
-          ),
-        );
-      });
-    }
     return Scaffold(
       appBar: AppBar(
         //automaticallyImplyLeading: false,
@@ -221,7 +165,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                           .child('pImage')
                                           .value
                                           .toString(),
-                                      bidList: snapshot.child('pId')
+                                      bidList: snapshot.child('pId'),
+                                    timeline: snapshot.child('pTimeline').value.toString(),
                                   ),
                                 );
                               })),

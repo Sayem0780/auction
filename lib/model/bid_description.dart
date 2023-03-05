@@ -7,9 +7,10 @@ class BidDes{
   final String price;
   final String imageUrl;
   final DataSnapshot bidList;
+  final String timeline;
 
   const BidDes({
-    required this.title,required this.Description,required this.price,required this.imageUrl,required this.bidList
+    required this.title,required this.Description,required this.price,required this.imageUrl,required this.bidList,required this.timeline
   });
 
 }

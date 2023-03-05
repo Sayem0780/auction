@@ -2,6 +2,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
+import 'package:ustad/methods.dart';
 import 'package:ustad/model/bid_description.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
@@ -63,8 +64,7 @@ class _BidDescriptionState extends State<BidDescription> {
                   ),
                   Container(
                     height: MediaQuery.of(context).size.height*.35,
-                    child: Expanded(
-                      child: FirebaseAnimatedList(
+                    child: FirebaseAnimatedList(
                               query: dbRef.child('Bider List').child('BID').child(args.bidList.value.toString()),
                               itemBuilder: (BuildContext context, DataSnapshot snapshot,
                                   Animation<double> animation, int index) {
@@ -100,8 +100,7 @@ class _BidDescriptionState extends State<BidDescription> {
                                                         ),
                                                         child: Padding(
                                                           padding: const EdgeInsets.all(8.0),
-                                                          child: Expanded(
-                                                            child: AutoSizeText(
+                                                          child: AutoSizeText(
                                                               snapshot
                                                                   .child('biderEmail')
                                                                   .value
@@ -111,7 +110,6 @@ class _BidDescriptionState extends State<BidDescription> {
                                                                   fontSize: 20,
                                                                   fontWeight: FontWeight.w900),
                                                             ),
-                                                          ),
                                                         ),
                                                       ),
                                                       left: 10,
@@ -161,12 +159,24 @@ class _BidDescriptionState extends State<BidDescription> {
                               },
                             ),
                     ),
-                  ),
-
+                  Container(
+                    height: MediaQuery.of(context).size.height*.1,
+                  )
                 ],
               ),
+
           ),
         ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.shopping_cart_outlined),
+        onPressed: (){
+          String time = args.timeline;
+          DateTime now = DateTime.now();
+          DateTime bidTime = DateTime.parse(time);
+          bidTime.compareTo(now)< 0? toastMassage("Time is Over"):dialog(context, args.bidList);
+        },
+      ),
     );
   }
 }
